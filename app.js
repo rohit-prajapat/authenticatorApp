@@ -93,21 +93,48 @@ app.get('/register', (req, res) => {
 
 app.post('/login',passport.authenticate('local', {successRedirect: '/protected', failureRedirect: '/login'}));
 
-app.post('/register', (req, res) => {
-    let { username, password } = req.body;
-    let user = new UserModel({
-        username: username,
-        password: hashSync(password, 10)
+// app.post('/register', (req, res) => {
+//     let { username, password } = req.body;
+//     let user = new UserModel({
+//         username: username,
+//         password: hashSync(password, 10)
+//     });
+
+//     user.save().then((data) => {
+//         console.log("User registered successfully:", data);
+//     }).catch(err => {
+//         console.log("Error registering user:", err);
+//     });
+
+
+    
+
+//     res.redirect('user logIn');
+// });
+app.post('/register', (req, res, next) => {
+    const user = new UserModel({
+        username: req.body.username,
+        password: hashSync(req.body.password, 10)
     });
 
-    user.save().then((data) => {
-        console.log("User registered successfully:", data);
-    }).catch(err => {
-        console.log("Error registering user:", err);
-    });
-
-    res.redirect('/login');
+    user.save()
+        .then(user => {
+            // Automatically log in the user after registration
+            req.login(user, (err) => {
+                if (err) {
+                    return next(err);
+                }
+                res.redirect('/protected'); // Redirect to a protected route or dashboard
+            });
+        })
+        .catch(err => {
+            res.status(500).send({ error: 'Registration failed' });
+        });
 });
+
+
+
+
 
 const donefunct = () => {
     console.log('done');
