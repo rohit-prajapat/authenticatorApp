@@ -9,10 +9,6 @@ const { connection } = require('mongoose');
 const { render } = require('ejs');
 const LocalStrategy = require('passport-local').Strategy;
 
-app.get('/', (req, res) => {
-  
-    res.render("Home");
-});
 
 
 passport.use(new LocalStrategy(
@@ -71,6 +67,8 @@ app.use(session({
     }
 }));
 
+
+
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
 
@@ -79,6 +77,25 @@ app.use(passport.session());
 app.set('trust proxy', 1); // trust first proxy
 
 
+
+
+
+app.get('/', (req, res) => {
+    let flag;
+    console.log('home page',flag);
+    if (req.isAuthenticated()) {
+        flag = true;
+    } else {
+        flag = false;
+    }
+    console.log('home page',flag);
+    try{
+        res.render('Home',{flag});
+    }catch(err){
+        console.log('err in home page : ',err);
+    }
+
+});
 
 
 
@@ -157,6 +174,14 @@ app.get('/protected', (req, res) => {
         res.send("error : Not Authenticated");
     }
 });
+
+// app.get('/islogin', (req, res) => {
+//     if (req.isAuthenticated()) {
+//         res.send({ loggedIn: true, user: req.user });
+//     } else {
+//         res.send({ loggedIn: false });
+//     }
+// });
 app.use((err,req,res,next)=>{
    
     res.send(err);

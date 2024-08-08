@@ -8,11 +8,15 @@
 <body>
     <h1>Home</h1>
     <br>
-    <a href="/login">Login </a>
-    <br>
-    <a href="/register">Register</a>
-    <br>
-    <a href="/logout">Logout</a>
+    <%if(!flag){%>
+        <a href="/login">Login </a>
+        <br>
+        <a href="/register">Register</a>
+        <br>
+    <%}%>
+    <%if(flag) {%>
+        <a href="/logout">Logout</a>
+    <%}%>
     
 </body>
 </html>
